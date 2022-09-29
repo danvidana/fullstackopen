@@ -31,16 +31,38 @@ const Languages = ({ languages }) => {
   )
 }
 
-const WeatherSection = ({country}) => {
+const WeatherSection = ({country, capitalTemp, icon, windSpeed}) => {
   return (
     <div>
       <h2>Weather in {country.capital}</h2>
-      <div>temperature {}</div>
+      <div>temperature {capitalTemp} Celcius</div>
+      <img src={`http://openweathermap.org/img/wn/${icon}@2x.png`} alt={"icon code"} ></img>
+      <div>wind {windSpeed} m/s</div>
     </div>
   )
 }
 
 const CountryDetails = ({ country }) => {
+  const [capitalTemp, setCapitalTemp] = useState("")
+  const [weatherIcon, setWeatherIcon] = useState("")
+  const [windSpeed, setWindSpeed] = useState("")
+  const api_key = process.env.REACT_APP_API_KEY
+  console.log(api_key)
+
+  const hook = () => {
+    console.log('effect (weather hook)')
+    axios
+      .get(`https://api.openweathermap.org/data/2.5/weather?lat=${country.latlng[0]}&lon=${country.latlng[1]}&units=metric&exclude=&appid=${api_key}`)
+      .then(response => {
+        console.log('promise fulfilled')
+        setCapitalTemp(response.data.main.temp)
+        setWeatherIcon(response.data.weather[0].icon)
+        setWindSpeed(response.data.wind.speed)
+      })
+  }
+
+  useEffect(hook, [])
+
   return (
     <div>
       <h2>{country.name.common}</h2>
@@ -49,7 +71,7 @@ const CountryDetails = ({ country }) => {
       <h3>languages:</h3>
       <Languages languages={country.languages} />
       <img src={country.flags.png} alt={`flag of ${country.name.common}`} />
-      <WeatherSection country={country} />
+      <WeatherSection country={country} capitalTemp={capitalTemp} icon={weatherIcon} windSpeed={windSpeed}/>
     </div>
   )
 }
