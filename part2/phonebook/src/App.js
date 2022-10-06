@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react'
-import axios from 'axios'
 import personService from './services/persons'
 
 const Person = ({ person, deletePerson }) => {
@@ -49,12 +48,35 @@ const Persons = ({ personsToShow, deletePerson }) => {
   )
 }
 
+const Notification = ({ message, messageType }) => {
+  if (message === null) {
+    return null
+  }
+
+  if (messageType === 'success') {
+    return (
+      <div className='success'>
+        {message}
+      </div>
+    )
+  }else {
+    return (
+      <div className='error'>
+        {message}
+      </div>
+    )
+  }
+  
+}
+
 const App = () => {
   const [persons, setPersons] = useState([]) 
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
   const [filtering, setFiltering] = useState(false)
   const [newSearch, setNewSearch] = useState('')
+  const [message, setMessage] = useState(null)
+  const [messageType, setMessageType] = useState(null)
 
   useEffect(() => {
     personService
@@ -74,7 +96,23 @@ const App = () => {
         personService
           .update(person.id, changedPerson)
           .then(returnedPerson => {
+            setMessage(`${returnedPerson.name} phone number was changed`)
+            setMessageType('success')
+            setTimeout(() => {
+              setMessage(null)
+              setMessageType(null)
+            }, 5000)
             setPersons(persons.map(p => p.id !== person.id ? p : returnedPerson))
+          })
+          .catch(error => {
+            console.log(error)
+            setMessage(`Information of ${changedPerson.name} has already been removed from server`)
+            setMessageType('error')
+            setTimeout(() => {
+              setMessage(null)
+              setMessageType(null)
+            }, 5000)
+            setPersons(persons.filter(p => p.id !== changedPerson.id))
           })
       }
     }else {
@@ -86,6 +124,12 @@ const App = () => {
       personService
         .create(newPerson)
         .then(returnedPerson => {
+          setMessage(`${returnedPerson.name} phone number was added`)
+          setMessageType('success')
+          setTimeout(() => {
+            setMessage(null)
+            setMessageType(null)
+          }, 5000)
           setPersons(persons.concat(returnedPerson))
           setNewName('')
           setNewNumber('')
@@ -98,6 +142,12 @@ const App = () => {
       personService
         .deletePerson(id)
         .then(returnedPerson => {
+          setMessage(`${returnedPerson.name} was deleted from server`)
+          setMessageType('success')
+          setTimeout(() => {
+            setMessage(null)
+            setMessageType(null)
+          }, 5000)
           setPersons(persons.filter(p => p.id !== id))
         })
         .catch(error => {
@@ -131,6 +181,9 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
+      <Notification
+        message={message}
+        messageType={messageType} />
       <Filter
         searchTerm={newSearch}
         handler={handleSearchChange} />
