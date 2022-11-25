@@ -1,6 +1,6 @@
 const mongoose = require('mongoose')
 
-const url = process.env.MONODB_URI
+const url = process.env.MONGODB_URI
 
 console.log('connecting to', url)
 
@@ -18,6 +18,8 @@ const noteSchema = new mongoose.Schema({
   important: Boolean
 })
 
+//Changes __id Mongo property into "id"
+//Removes __v Mongo property
 noteSchema.set('toJSON',  {
   transform: (document, returnedObject) => {
     returnedObject.id = returnedObject._id.toString()
@@ -26,4 +28,4 @@ noteSchema.set('toJSON',  {
   }
 })
 
-module.exports= mongoose.model('Note', noteSchema)
+module.exports = mongoose.model('Note', noteSchema)
