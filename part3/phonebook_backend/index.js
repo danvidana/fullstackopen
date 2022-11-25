@@ -1,43 +1,27 @@
+require('dotenv').config()
 const express = require('express')
 const app = express()
 const morgan = require('morgan')
 const cors = require('cors')
+const Entry = require('./models/entry')
 
 app.use(express.static('build'))
 app.use(cors())
 app.use(express.json())
 
+
+//Middleware Morgan
 morgan.token('postBody', function (req, res)
 {
   return JSON.stringify(req.body)
 })
 app.use(morgan(':method :url :status :res[content-length] - :response-time ms :postBody'))
 
-let persons = [
-    { 
-      "id": 1,
-      "name": "Arto Hellas", 
-      "number": "040-123456"
-    },
-    { 
-      "id": 2,
-      "name": "Ada Lovelace", 
-      "number": "39-44-5323523"
-    },
-    { 
-      "id": 3,
-      "name": "Dan Abramov", 
-      "number": "12-43-234345"
-    },
-    { 
-      "id": 4,
-      "name": "Mary Poppendieck", 
-      "number": "39-23-6423122"
-    }
-]
-
+//Requests
 app.get('/api/persons', (request, response) => {
-    response.json(persons)
+  Entry.find({}).then(entries => {
+    response.json(entries)
+  })
 })
 
 app.get('/info', (request, response) => {
@@ -50,16 +34,9 @@ app.get('/info', (request, response) => {
 })
 
 app.get('/api/persons/:id', (request, response) => {
-    const id = Number(request.params.id)
-    const person = persons.find(p => p.id === id)
-
-    if (person) {
-        response.json(person)
-    }else {
-        response.status(404).json({
-            error: '404 content missing'
-        })
-    }
+    Entry.findById(request.params.id).then(entry => {
+      response.json(entry)
+    })
 })
 
 app.delete('/api/persons/:id', (request, response) => {
@@ -69,16 +46,10 @@ app.delete('/api/persons/:id', (request, response) => {
     response.status(204).end()
 })
 
-const generateId = () => {
-  const maxId = persons.length > 0
-    ? Math.max(...persons.map(p => p.id))
-    : 0
-    return maxId + 1
-}
-
 app.post('/api/persons', (request, response) => {
   const body = request.body
 
+  //Checks for missing name or number or uniqueness of name
   if(!body.name) {
     return response.status(400).json({
       error: 'name is missing'
@@ -87,22 +58,23 @@ app.post('/api/persons', (request, response) => {
     return response.status(400).json({
       error: 'number is missing'
     })
-  }else if(persons.filter(p => p.name === body.name).length > 0) {
-    console.log(persons.filter(p => p.name === body.name))
-    return response.status(400).json({
-      error: 'name must be unique'
-    })
   }
+  //else if(persons.filter(p => p.name === body.name).length > 0) {
+  //   console.log(persons.filter(p => p.name === body.name))
+  //   return response.status(400).json({
+  //     error: 'name must be unique'
+  //   })
+  // }
 
-  const person = {
+  const entry = new Entry({
     name: body.name,
     number: body.number,
-    date: new Date(),
-    id: generateId(),
-  }
+    date: new Date()
+  })
 
-  persons = persons.concat(person)
-  response.json(person)
+  entry.save().then(savedEntry => {
+    response.json(savedEntry)
+  })
 })
 
 const PORT = process.env.PORT || 3001
