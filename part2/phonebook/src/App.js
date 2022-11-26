@@ -138,6 +138,7 @@ const App = () => {
   }
 
   const deletePerson = id => {
+    console.log(id)
     if (window.confirm(`Delete ${persons.find(p => p.id === id).name} ?`)) {
       personService
         .deletePerson(id)
@@ -151,7 +152,8 @@ const App = () => {
           setPersons(persons.filter(p => p.id !== id))
         })
         .catch(error => {
-          alert(`the note with id: ${id} does not exist on the server`)
+          console.log(error)
+          alert(`the person with id: ${id} does not exist on the server`)
         })
     }
   }
