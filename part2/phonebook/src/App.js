@@ -106,13 +106,13 @@ const App = () => {
           })
           .catch(error => {
             console.log(error)
-            setMessage(`Information of ${changedPerson.name} has already been removed from server`)
+            setMessage(error.response.data.error)
             setMessageType('error')
             setTimeout(() => {
               setMessage(null)
               setMessageType(null)
             }, 5000)
-            setPersons(persons.filter(p => p.id !== changedPerson.id))
+            //setPersons(persons.filter(p => p.id !== changedPerson.id))
           })
       }
     }else {
@@ -133,6 +133,14 @@ const App = () => {
           setPersons(persons.concat(returnedPerson))
           setNewName('')
           setNewNumber('')
+        })
+        .catch(error => {
+          setMessage(error.response.data.error)
+          setMessageType('error')
+          setTimeout(() => {
+            setMessage(null)
+            setMessageType(null)
+          }, 5000)
         }) 
     }
   }
