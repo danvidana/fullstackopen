@@ -27,17 +27,26 @@ app.get('/api/persons', (request, response) => {
 
 app.get('/info', (request, response) => {
     const date = new Date()
-    response.send(`
-        <div>Phonebook has info for ${Entry.count()} people</div>
+
+    const count = Entry.countDocuments((error, count) => {
+      response.send(`
+        <div>Phonebook has info for ${count} people</div>
         <div>${date}</div>
         `
-    )
+      )
+    })
 })
 
-app.get('/api/persons/:id', (request, response) => {
-    Entry.findById(request.params.id).then(entry => {
-      response.json(entry)
-    })
+app.get('/api/persons/:id', (request, response, next) => {
+    Entry.findById(request.params.id)
+      .then(entry => {
+        if(entry)  {
+          response.json(entry)
+        }else {
+          response.status(404).end()
+        }
+      })
+      .catch(error => next(error))
 })
 
 app.delete('/api/persons/:id', (request, response, next) => {
@@ -62,12 +71,6 @@ app.post('/api/persons', (request, response) => {
       error: 'number is missing'
     })
   }
-  //else if(persons.filter(p => p.name === body.name).length > 0) {
-  //   console.log(persons.filter(p => p.name === body.name))
-  //   return response.status(400).json({
-  //     error: 'name must be unique'
-  //   })
-  // }
 
   const entry = new Entry({
     name: body.name,
@@ -78,6 +81,21 @@ app.post('/api/persons', (request, response) => {
   entry.save().then(savedEntry => {
     response.json(savedEntry)
   })
+})
+
+app.put('/api/persons/:id', (request, response, next) => {
+  const body = request.body
+
+  const entry = {
+    number: body.number,
+    name: body.name,
+  }
+
+  Entry.findByIdAndUpdate(request.params.id, entry, { new: true })
+    .then(updatedEntry => {
+      response.json(updatedEntry)
+    })
+    .catch(error => next(error))
 })
 
 const errorHandler = (error, request, response, next) => {
