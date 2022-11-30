@@ -2,8 +2,8 @@ POST http://localhost:3001/api/blogs/
 Content-Type: application/json
 
 {
-    "title": "Test2 POST",
-    "author": "Carlos Nunez",
-    "url": "www.nintendo.com",
+    "title": "Test3 POST",
+    "author": "Oscar Hernandez",
+    "url": "www.playstation.com",
     "likes": 0
 }
