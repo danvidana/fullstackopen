@@ -1,5 +1,6 @@
+/* eslint-disable import/no-anonymous-default-export */
 import axios from "axios";
-const baseUrl = '/api/notes/'
+const baseUrl = '/api/notes'
 
 const getAll = () => {
     const request = axios.get(baseUrl)
@@ -7,7 +8,7 @@ const getAll = () => {
 }
 
 const create = newObject => {
-    const request = axios.post(baseUrl, newObject)
+    const request = axios.post(`${baseUrl}/`, newObject)
     return request.then(response => response.data)
 }
 
