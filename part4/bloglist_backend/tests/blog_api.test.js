@@ -1,17 +1,20 @@
+const bcrypt = require('bcrypt')
 const mongoose = require('mongoose')
 const supertest = require('supertest')
 const app = require('../app')
 const api = supertest(app)
 const helper = require('./test_helper')
+
+const User = require('../models/user')
 const Blog = require('../models/blog')
 
+//Deletes everything in DB and saves initialNotes
+//This is done before any test runs
 beforeEach(async () => {
   await Blog.deleteMany({})
-
-  const blogObjects = helper.initialBlogs
-    .map(blog => new Blog(blog))
-  const promiseArray = blogObjects.map(blog => blog.save())
-  await Promise.all(promiseArray)
+  await User.deleteMany({})
+  await Blog.insertMany(helper.initialBlogs)
+  await User.insertMany(helper.initialUser)
 })
 
 test('blogs are returned as json', async () => {
@@ -133,6 +136,51 @@ test('likes on note are updated', async () => {
   const blogsAtEnd = await helper.blogsInDb()
   expect(blogsAtEnd[0]).toEqual(updatedBlog)
 })
+
+describe('user tests', () => {
+  test('creation of user fails with proper statuscode with invalid users', async () => {
+    const usersAtStart = await helper.usersInDb()
+
+    const newUserWithoutUsername = {
+      name: 'Test User 1',
+      password: 'password'
+    }
+
+    const newUserWith2CUsername = {
+      username: 'te',
+      name: 'Test User 2',
+      password: 'password'
+    }
+
+    const newUserWith2CPassword = {
+      username: 'test',
+      name: 'Test User 3',
+      password: 'pa'
+    }
+
+    await api
+      .post('/api/users')
+      .send(newUserWithoutUsername)
+      .expect(400)
+      .expect('Content-Type', /application\/json/)
+
+    await api
+      .post('/api/users')
+      .send(newUserWith2CUsername)
+      .expect(400)
+      .expect('Content-Type', /application\/json/)
+
+    await api
+      .post('/api/users')
+      .send(newUserWith2CPassword)
+      .expect(400)
+      .expect('Content-Type', /application\/json/)
+
+    const usersAtEnd = await helper.usersInDb()
+    expect(usersAtEnd).toEqual(usersAtStart)
+  })
+})
+
 
 afterAll(() => {
   mongoose.connection.close()
