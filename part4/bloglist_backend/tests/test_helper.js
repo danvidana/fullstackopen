@@ -20,7 +20,7 @@ const initialUser = [
   {
     username: 'root',
     user: 'Superuser',
-    passwordHash: 'password'
+    password: 'password'
   }
 ]
 
