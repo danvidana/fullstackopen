@@ -4,9 +4,6 @@ const app = require('../app')
 const api = supertest(app)
 const helper = require('./test_helper')
 
-const User = require('../models/user')
-const Blog = require('../models/blog')
-
 //Deletes everything in DB and saves initialNotes
 //This is done before any test runs
 beforeEach(async () => {
