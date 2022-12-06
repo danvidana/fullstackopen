@@ -1,7 +1,10 @@
 import { useState, useEffect } from 'react'
 
+import Togglable from './components/Toggable'
 import Blog from './components/Blog'
 import Notification from './components/Notification'
+import LoginForm from './components/LoginForm'
+import BlogForm from './components/BlogForm'
 
 import blogService from './services/blogs'
 import loginService from './services/login'
@@ -10,9 +13,6 @@ const App = () => {
   const [message, setMessage] = useState(null)
   const [messageType, setMessageType] = useState(null)
   const [blogs, setBlogs] = useState([])
-  const [title, setTitle] = useState('')
-  const [author, setAuthor] = useState('')
-  const [url, setUrl] = useState('')
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
@@ -66,21 +66,9 @@ const App = () => {
     setUser(null)
   }
 
-  const addBlog = async (event) => {
-    event.preventDefault()
-
-    const blogObject = {
-      title: title,
-      author: author,
-      url: url,
-      likes: 0
-    }
-
+  const addBlog = async (blogObject) => {
     const returnedBlog = await blogService.create(blogObject)
     setBlogs(blogs.concat(returnedBlog))
-    setTitle('')
-    setAuthor('')
-    setUrl('')
 
     //Notification management
     setMessageType('success')
@@ -91,88 +79,56 @@ const App = () => {
     }, 2000)
   }
 
+  const likeBlog = async (blogObject) => {
+    await blogService.like(blogObject)
+  }
+
   const loginForm = () => (
-    <form onSubmit={handleLogin}>
-      <div>
-        username
-          <input
-          type="text"
-          value={username}
-          name="Username"
-          onChange={({ target }) => setUsername(target.value)}
-        />
-      </div>
-      <div>
-        password
-          <input
-          type="password"
-          value={password}
-          name="Password"
-          onChange={({ target }) => setPassword(target.value)}
-        />
-      </div>
-      <button type="submit">login</button>
-    </form>
+    <Togglable buttonLabel='login'>
+      <LoginForm
+        username={username}
+        password={password}
+        handleUsernameChange={({ target }) => setUsername(target.value)}
+        handlePasswordChange={({ target }) => setPassword(target.value)}
+        handleSubmit={handleLogin}
+      />
+    </Togglable>
   )
 
   const blogForm = () => (
-    <form onSubmit={addBlog}>
-      <div>
-        title:
-          <input
-          type="text"
-          value={title}
-          name="Title"
-          onChange = {({ target }) => setTitle(target.value)}
-          />
-      </div>
-      <div>
-        author:
-          <input
-          type="text"
-          value={author}
-          name="Author"
-          onChange = {({ target }) => setAuthor(target.value)}
-          />
-      </div>
-      <div>
-        url:
-          <input
-          type="text"
-          value={url}
-          name="Author"
-          onChange = {({ target }) => setUrl(target.value)}
-          />
-      </div>
-      <button type='submit'>create</button>
-    </form>
+    <Togglable buttonLabel='create new blog'>
+      <BlogForm createBlog={addBlog}/>
+    </Togglable>
   )
 
   return (
     <div>
+      <Notification
+        message={message}
+        messageType={messageType}
+      />
+      <h2>blogs</h2>
       {user === null ?
         <div>
-          <h1>log in to application</h1>
-          <Notification
-            message={message}
-            messageType={messageType} />
           {loginForm()}
         </div>
         :
         <div>
-          <h2>blogs</h2>
-          <Notification
-            message={message}
-            messageType={messageType} />
           <p>
             {user.name} logged-in
             <button onClick={handleLogout}>logout</button>
           </p>
-          <h2>create new</h2>
           {blogForm()}
-          {blogs.map(blog =>
-            <Blog key={blog.id} blog={blog} />
-          )}
+          {blogs
+            .sort((a, b) => a.likes - b.likes)
+            .reverse()
+            .map(blog =>
+              <Blog 
+                key={blog.id}
+                blog={blog}
+                handleLike={likeBlog} />
+            )
+          }
         </div>
       }
     </div>

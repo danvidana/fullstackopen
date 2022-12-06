@@ -9,9 +9,9 @@
     "deploy:full": "npm run build:ui && npm run deploy",
     "logs:prod": "fly logs",
     "start": "NODE_ENV=production node index.js",
-    "dev": "NODE_ENV=test nodemon index.js",
+    "dev": "NODE_ENV=development nodemon index.js",
     "lint": "eslint .",
-    "test": "NODE_ENV=test jest --verbose --runInBand --forceExit"
+    "test": "NODE_ENV=production jest --verbose --runInBand --forceExit"
   },
   "author": "Daniel Vidana",
   "license": "MIT",

@@ -37,7 +37,8 @@ blogsRouter.delete('/:id', async (request, response) => {
   }
 })
 
-//PUT/UPDATE a single blog
+//PUT/UPDATE request - Updates a single blog
+//Used for liking a porst
 blogsRouter.put('/:id', async (request, response) => {
   const blog = request.body
   const updatedBlog = await Blog.findByIdAndUpdate(
