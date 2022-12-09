@@ -1,8 +1,15 @@
-import { useState } from "react"
+import { useState, useEffect } from "react"
 
-const Blog = ({blog, handleLike, handleDeleteBlog}) => {
+const Blog = ({blog, username, handleLike, handleDeleteBlog}) => {
   const [visible, setVisible] = useState(false)
   const [likes, setLikes] = useState(blog.likes)
+  const [userOwner, setUserOwner] = useState(false)
+
+  useEffect(() => {
+    if(username === blog.user.username) {
+      setUserOwner(!userOwner)
+    }
+  }, [])
 
   const blogStyle = {
     paddingTop: 10,
@@ -14,6 +21,7 @@ const Blog = ({blog, handleLike, handleDeleteBlog}) => {
 
   const hideWhenVisible = { display: visible ? 'none' : '' }
   const showWhenVisible = { display: visible ? '' : 'none' }
+  const showDeleteButtton = {display: userOwner ? '' : 'none'}
 
   const toggleVisibility = () => {
     setVisible(!visible)
@@ -48,23 +56,23 @@ const Blog = ({blog, handleLike, handleDeleteBlog}) => {
         <button onClick={toggleVisibility}>view</button>
       </div>
       <div style={showWhenVisible}>
-      <div>
-        {blog.title} {blog.author}
-        <button onClick={toggleVisibility}>view</button>
-      </div>
-      <div>
-        {blog.url}
-      </div>
-      <div>
-        likes {likes}
-        <button onClick={likeBlog}>like</button>
-      </div>
-      <div>
-        {blog.user.name}
-      </div>
-      <div>
-        <button onClick={deleteBlog}>remove</button>
-      </div>
+        <div>
+          {blog.title} {blog.author}
+          <button onClick={toggleVisibility}>view</button>
+        </div>
+        <div>
+          {blog.url}
+        </div>
+        <div>
+          likes {likes}
+          <button onClick={likeBlog}>like</button>
+        </div>
+        <div>
+          {blog.user.name}
+        </div>
+        <div style={showDeleteButtton}>
+          <button onClick={deleteBlog}>remove</button>
+        </div>
       </div>
   </div>
 )}
