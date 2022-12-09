@@ -5,12 +5,6 @@ const Blog = ({blog, username, handleLike, handleDeleteBlog}) => {
   const [likes, setLikes] = useState(blog.likes)
   const [userOwner, setUserOwner] = useState(false)
 
-  useEffect(() => {
-    if(username === blog.user.username) {
-      setUserOwner(!userOwner)
-    }
-  }, [])
-
   const blogStyle = {
     paddingTop: 10,
     paddingLeft: 2,
@@ -21,7 +15,9 @@ const Blog = ({blog, username, handleLike, handleDeleteBlog}) => {
 
   const hideWhenVisible = { display: visible ? 'none' : '' }
   const showWhenVisible = { display: visible ? '' : 'none' }
-  const showDeleteButtton = {display: userOwner ? '' : 'none'}
+  const showDeleteButton = { display: username === blog.user.username ? '' : 'none' }
+  
+  console.log(showDeleteButton)
 
   const toggleVisibility = () => {
     setVisible(!visible)
@@ -70,7 +66,7 @@ const Blog = ({blog, username, handleLike, handleDeleteBlog}) => {
         <div>
           {blog.user.name}
         </div>
-        <div style={showDeleteButtton}>
+        <div style={showDeleteButton}>
           <button onClick={deleteBlog}>remove</button>
         </div>
       </div>
