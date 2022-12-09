@@ -24,7 +24,7 @@ const App = () => {
   }, [])
 
   useEffect(() => {
-    const loggedUserJSON = window.localStorage.getItem('loggedNoteappUser')
+    const loggedUserJSON = window.localStorage.getItem('loggedBlogappUser')
     if(loggedUserJSON) {
       const user = JSON.parse(loggedUserJSON)
       setUser(user)
@@ -40,7 +40,7 @@ const App = () => {
       })
 
       window.localStorage.setItem(
-        'loggedNoteappUser', JSON.stringify(user)
+        'loggedBlogappUser', JSON.stringify(user)
       )
 
       blogService.setToken(user.token)
@@ -60,8 +60,8 @@ const App = () => {
   }
 
   const handleLogout = (event) => {
-    if(window.localStorage.getItem('loggedNoteappUser')) {
-      window.localStorage.removeItem('loggedNoteappUser')
+    if(window.localStorage.getItem('loggedBlogappUser')) {
+      window.localStorage.removeItem('loggedBlogappUser')
     }
     setUser(null)
   }
@@ -83,6 +83,20 @@ const App = () => {
     await blogService.like(blogObject)
   }
 
+  const deleteBlog = async (blogObject) => {
+    await blogService.deleteBlog(blogObject.id)
+    setBlogs(blogs.filter(b => b.id !== blogObject.id))
+
+    //Notification management
+    setMessageType('success')
+    setMessage(`${blogObject.title} by ${blogObject.author} was removed`)
+    setTimeout(() => {
+      setMessage(null)
+      setMessageType(null)
+    }, 2000)
+    
+  }
+
   const loginForm = () => (
     <Togglable buttonLabel='login'>
       <LoginForm
@@ -97,7 +111,9 @@ const App = () => {
 
   const blogForm = () => (
     <Togglable buttonLabel='create new blog'>
-      <BlogForm createBlog={addBlog}/>
+      <BlogForm
+        createBlog={addBlog}
+      />
     </Togglable>
   )
 
@@ -126,7 +142,8 @@ const App = () => {
               <Blog 
                 key={blog.id}
                 blog={blog}
-                handleLike={likeBlog} />
+                handleLike={likeBlog}
+                handleDeleteBlog={deleteBlog} />
             )
           }
         </div>
