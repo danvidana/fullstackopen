@@ -20,7 +20,7 @@ const App = () => {
   useEffect(() => {
     blogService.getAll().then(blogs =>
       setBlogs( blogs )
-    )  
+    )
   }, [])
 
   useEffect(() => {
@@ -51,7 +51,7 @@ const App = () => {
     }catch(exception) {
       //Notification management
       setMessageType('error')
-      setMessage(`wrong username or password`)
+      setMessage('wrong username or password')
       setTimeout(() => {
         setMessage(null)
         setMessageType(null)
@@ -59,7 +59,7 @@ const App = () => {
     }
   }
 
-  const handleLogout = (event) => {
+  const handleLogout = () => {
     if(window.localStorage.getItem('loggedBlogappUser')) {
       window.localStorage.removeItem('loggedBlogappUser')
     }
@@ -94,7 +94,6 @@ const App = () => {
       setMessage(null)
       setMessageType(null)
     }, 2000)
-    
   }
 
   const loginForm = () => (
@@ -139,7 +138,7 @@ const App = () => {
             .sort((a, b) => a.likes - b.likes)
             .reverse()
             .map(blog =>
-              <Blog 
+              <Blog
                 key={blog.id}
                 blog={blog}
                 username={user.username}
