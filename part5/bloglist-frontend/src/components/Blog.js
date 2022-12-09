@@ -1,9 +1,8 @@
-import { useState, useEffect } from "react"
+import { useState } from "react"
 
 const Blog = ({blog, username, handleLike, handleDeleteBlog}) => {
   const [visible, setVisible] = useState(false)
   const [likes, setLikes] = useState(blog.likes)
-  const [userOwner, setUserOwner] = useState(false)
 
   const blogStyle = {
     paddingTop: 10,
@@ -16,8 +15,6 @@ const Blog = ({blog, username, handleLike, handleDeleteBlog}) => {
   const hideWhenVisible = { display: visible ? 'none' : '' }
   const showWhenVisible = { display: visible ? '' : 'none' }
   const showDeleteButton = { display: username === blog.user.username ? '' : 'none' }
-  
-  console.log(showDeleteButton)
 
   const toggleVisibility = () => {
     setVisible(!visible)
