@@ -30,6 +30,13 @@ const like = async newObject => {
   return response.data
 }
 
+const deleteBlog = async newObject => {
+  const config = {
+    headers: { Authorization: token }
+  }
+  const response = await axios.delete(``)
+}
+
 export default {
   getAll,
   create,
