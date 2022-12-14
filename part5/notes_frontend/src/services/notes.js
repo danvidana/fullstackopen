@@ -1,5 +1,4 @@
-/* eslint-disable import/no-anonymous-default-export */
-import axios from "axios";
+import axios from 'axios'
 const baseUrl = '/api/notes'
 
 let token = null
@@ -28,8 +27,8 @@ const update = (id, newObject) => {
 }
 
 export default {
-    getAll,
-    create,
-    update,
-    setToken
+  getAll,
+  create,
+  update,
+  setToken
 }
