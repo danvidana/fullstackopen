@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useField, useReset } from './hooks' 
 
 import {
   Routes,
@@ -72,20 +73,29 @@ const Footer = () => (
 )
 
 const CreateNew = (props) => {
-  const [content, setContent] = useState('')
-  const [author, setAuthor] = useState('')
-  const [info, setInfo] = useState('')
+  const content = useField('text')
+  const author = useField('text')
+  const info = useField('text')
+  const resetContent = useReset
+
   const navigate = useNavigate()
 
   const handleSubmit = (e) => {
     e.preventDefault()
     props.onAddNew({
-      content,
-      author,
-      info,
-      votes: 0
+      votes: 0,
+      content: content.value,
+      author: author.value,
+      info: info.value
     })
     navigate('/')
+  }
+
+  const reset = (e) => {
+    e.preventDefault()
+    resetContent(content)
+    resetContent(author)
+    resetContent(info)
   }
 
   return (
@@ -94,17 +104,18 @@ const CreateNew = (props) => {
       <form onSubmit={handleSubmit}>
         <div>
           content
-          <input name='content' value={content} onChange={(e) => setContent(e.target.value)} />
+          <input {...content}/>
         </div>
         <div>
           author
-          <input name='author' value={author} onChange={(e) => setAuthor(e.target.value)} />
+          <input {...author}/>
         </div>
         <div>
           url for more info
-          <input name='info' value={info} onChange={(e)=> setInfo(e.target.value)} />
+          <input {...info}/>
         </div>
-        <button>create</button>
+          <button type='submit'>create</button>
+          <button onClick={reset}>reset</button>
       </form>
     </div>
   )
@@ -151,19 +162,19 @@ const App = () => {
     }, 5000)
   }
 
-  const anecdoteById = (id) =>
-    anecdotes.find(a => a.id === id)
+  // const anecdoteById = (id) =>
+  //   anecdotes.find(a => a.id === id)
 
-  const vote = (id) => {
-    const anecdote = anecdoteById(id)
+  // const vote = (id) => {
+  //   const anecdote = anecdoteById(id)
 
-    const voted = {
-      ...anecdote,
-      votes: anecdote.votes + 1
-    }
+  //   const voted = {
+  //     ...anecdote,
+  //     votes: anecdote.votes + 1
+  //   }
 
-    setAnecdotes(anecdotes.map(a => a.id === id ? voted : a))
-  }
+  //   setAnecdotes(anecdotes.map(a => a.id === id ? voted : a))
+  // }
 
   return (
     <div>
