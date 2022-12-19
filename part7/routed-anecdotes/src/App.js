@@ -4,8 +4,6 @@ import {
   Routes,
   Route,
   Link,
-  Navigate,
-  useParams,
   useNavigate,
   useMatch
 } from "react-router-dom"
@@ -77,16 +75,17 @@ const CreateNew = (props) => {
   const [content, setContent] = useState('')
   const [author, setAuthor] = useState('')
   const [info, setInfo] = useState('')
-
+  const navigate = useNavigate()
 
   const handleSubmit = (e) => {
     e.preventDefault()
-    props.addNew({
+    props.onAddNew({
       content,
       author,
       info,
       votes: 0
     })
+    navigate('/')
   }
 
   return (
@@ -109,10 +108,18 @@ const CreateNew = (props) => {
       </form>
     </div>
   )
+}
 
+const Notification = ({ content }) => {
+  return (
+    <div>
+      a new anecdote {content} created!
+    </div>
+  )
 }
 
 const App = () => {
+  const [notification, setNotification] = useState('')
   const [anecdotes, setAnecdotes] = useState([
     {
       content: 'If it hurts, do it more often',
@@ -135,11 +142,13 @@ const App = () => {
     ? anecdotes.find(anecdote => anecdote.id === Number(match.params.id))
     : null
 
-  const [notification, setNotification] = useState('')
-
   const addNew = (anecdote) => {
     anecdote.id = Math.round(Math.random() * 10000)
     setAnecdotes(anecdotes.concat(anecdote))
+    setNotification(anecdote.content)
+    setTimeout(() => {
+      setNotification('')
+    }, 5000)
   }
 
   const anecdoteById = (id) =>
@@ -160,13 +169,17 @@ const App = () => {
     <div>
       <h1>Software anecdotes</h1>
       <Menu />
-
+      {notification !== ''
+        ? <Notification content={notification}/>
+        : null
+      }
       <Routes>
         <Route path='/' element={<AnecdoteList anecdotes={anecdotes} />} />
         <Route path='/anecdotes/:id' element={<Anecdote anecdote={anecdote} />} />
-        <Route path='/create' element={<CreateNew addnew={addNew} />} />
+        <Route path='/create' element={<CreateNew onAddNew={addNew} />} />
         <Route path='/about' element={<About />} />
       </Routes>
+      
 
       <Footer />
     </div>
