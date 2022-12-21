@@ -1,23 +1,28 @@
-import { useState } from 'react'
+import { useDispatch } from 'react-redux'
+import { createBlog } from '../reducers/blogReducer'
+import { setSuccessNotification } from '../reducers/notificationReducer'
+import blogService from '../services/blogs'
 
-const BlogForm = ({ createBlog }) => {
-  const [title, setTitle] = useState('')
-  const [author, setAuthor] = useState('')
-  const [url, setUrl] = useState('')
+const BlogForm = () => {
+  const dispatch = useDispatch()
 
-  const addBlog = (event) => {
+  const addBlog = async (event) => {
     event.preventDefault()
+    const title = event.target.title.value
+    const author = event.target.author.value
+    const url = event.target.url.value
+    event.target.title.value = ''
+    event.target.author.value = ''
+    event.target.url.value = ''
 
-    createBlog({
+    const newBlog = await blogService.create({
       title: title,
       author: author,
-      url: url,
-      likes: 0
+      url: url
     })
 
-    setTitle('')
-    setAuthor('')
-    setUrl('')
+    dispatch(createBlog(newBlog))
+    dispatch(setSuccessNotification(`Created '${title}' blog`))
   }
 
   return (
@@ -29,9 +34,7 @@ const BlogForm = ({ createBlog }) => {
           <input
             className='titleInput'
             type="text"
-            value={title}
-            name="Title"
-            onChange = {({ target }) => setTitle(target.value)}
+            name="title"
           />
         </div>
         <div>
@@ -39,9 +42,7 @@ const BlogForm = ({ createBlog }) => {
           <input
             className='authorInput'
             type="text"
-            value={author}
-            name="Author"
-            onChange = {({ target }) => setAuthor(target.value)}
+            name="author"
           />
         </div>
         <div>
@@ -49,9 +50,7 @@ const BlogForm = ({ createBlog }) => {
           <input
             className='urlInput'
             type="text"
-            value={url}
-            name="Author"
-            onChange = {({ target }) => setUrl(target.value)}
+            name="url"
           />
         </div>
         <button id='create-button' type='submit'>create</button>

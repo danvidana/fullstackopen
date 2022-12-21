@@ -22,7 +22,7 @@ export const setNotification = (content, seconds) => {
   return async dispatch => {
     dispatch(updateNotification(content))
     setTimeout(() => {
-      dispatch(removeNotification())  
+      dispatch(removeNotification())
     }, 1000 * seconds)
   }
 }
