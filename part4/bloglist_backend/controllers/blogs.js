@@ -38,14 +38,16 @@ blogsRouter.delete('/:id', async (request, response) => {
 })
 
 //PUT/UPDATE request - Updates a single blog
-//Used for liking a porst
+//Used for liking a post
 blogsRouter.put('/:id', async (request, response) => {
   const blog = request.body
+
   const updatedBlog = await Blog.findByIdAndUpdate(
     request.params.id,
-    blog,
+    { likes: blog.likes },
     { new: true, runValidators: true, context: 'query' }
-  )
+  ).populate('user', { username: 1, name: 1 })
+
   response.json(updatedBlog)
 })
 
