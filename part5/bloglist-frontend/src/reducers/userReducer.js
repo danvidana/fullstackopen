@@ -15,11 +15,14 @@ const userSlice = createSlice({
   reducers: {
     setUser(state, action) {
       return action.payload
+    },
+    removeUser() {
+      return { token: '', username: '', name: '' }
     }
   }
 })
 
-export const { setUser } = userSlice.actions
+export const { setUser, removeUser } = userSlice.actions
 
 export const initializeUser = () => {
   return async dispatch => {
@@ -46,6 +49,15 @@ export const loginUser = (username, password) => {
       //Notification management
       setErrorNotification('wrong username or password')
     }
+  }
+}
+
+export const logoutUser = () => {
+  return async dispatch => {
+    if (window.localStorage.getItem('loggedBlogappUser')) {
+      window.localStorage.removeItem('loggedBlogappUser')
+    }
+    dispatch(removeUser())
   }
 }
 

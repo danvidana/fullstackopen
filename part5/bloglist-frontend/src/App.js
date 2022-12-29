@@ -6,6 +6,7 @@ import BlogsList from './components/BlogsList'
 import Notification from './components/Notification'
 import BlogForm from './components/BlogForm'
 import Login from './components/Login'
+import LoggedUser from './components/LoggedUser'
 
 import { initializeBlogs } from './reducers/blogReducer'
 import { initializeUser } from './reducers/userReducer'
@@ -19,13 +20,6 @@ const App = () => {
     dispatch(initializeUser())
   }, [])
 
-  const handleLogout = () => {
-    // if (window.localStorage.getItem('loggedBlogappUser')) {
-    //   window.localStorage.removeItem('loggedBlogappUser')
-    // }
-    // setUser(null)
-  }
-
   const blogForm = () => (
     <Togglable buttonLabel='create new blog'>
       <BlogForm />
@@ -37,14 +31,10 @@ const App = () => {
       <Notification />
       <h2>Blogs</h2>
       {user.username === '' ?
-        (<Login user={user} />)
-        :
+        (<Login user={user} />) :
         (
           <div>
-            <p>
-              {user.name} logged-in
-              <button onClick={handleLogout}>logout</button>
-            </p>
+            <LoggedUser user={user} />
             {blogForm()}
             <BlogsList user={user} />
           </div>

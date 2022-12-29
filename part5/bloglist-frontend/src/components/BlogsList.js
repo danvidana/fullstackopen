@@ -54,12 +54,11 @@ const Blog = ({ blog, username, handleLike, handleDelete }) => {
 const BlogsList = ({ user }) => {
   const dispatch = useDispatch()
   const blogs = useSelector(state => state.blogs)
+  console.log(blogs)
 
   return (
     <>
       {blogs
-        .sort((a, b) => a.likes - b.likes)
-        .reverse()
         .map(blog =>
           <Blog
             key={blog.id}
