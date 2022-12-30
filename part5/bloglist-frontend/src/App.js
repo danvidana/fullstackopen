@@ -1,12 +1,18 @@
 import { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
+import {
+  Routes,
+  Route
+//   Link,
+//   useNavigate,
+//   useMatch
+} from 'react-router-dom'
 
-import Togglable from './components/Toggable'
-import BlogsList from './components/BlogsList'
 import Notification from './components/Notification'
-import BlogForm from './components/BlogForm'
 import Login from './components/Login'
 import LoggedUser from './components/LoggedUser'
+import Home from './components/Home'
+import Users from './components/Users'
 
 import { initializeBlogs } from './reducers/blogReducer'
 import { initializeUser } from './reducers/userReducer'
@@ -20,12 +26,6 @@ const App = () => {
     dispatch(initializeUser())
   }, [])
 
-  const blogForm = () => (
-    <Togglable buttonLabel='create new blog'>
-      <BlogForm />
-    </Togglable>
-  )
-
   return (
     <div>
       <Notification />
@@ -35,8 +35,10 @@ const App = () => {
         (
           <div>
             <LoggedUser user={user} />
-            {blogForm()}
-            <BlogsList user={user} />
+            <Routes>
+              <Route path='/' element={<Home user={user}/>} />
+              <Route path='/users' element={<Users />} />
+            </Routes>
           </div>
         )
       }
