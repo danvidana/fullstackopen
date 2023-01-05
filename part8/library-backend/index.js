@@ -168,12 +168,13 @@ const resolvers = {
     },
 
     editAuthor: (root, args) => {
-      if (authors.find(a => a.name === args.name)) {
-        const author = authors.find(a => a.name === args.name)
-        const newAuthor = { ...author, born: args.setBornTo }
-        authors = authors.concat(newAuthor)
-        return newAuthor
+      const author = authors.find(a => a.name === args.name)
+      if (!author) {
+        return null
       }
+      const updatedAuthor = { ...author, born: args.setBornTo }
+      authors = authors.map(a => a.name === args.name ? updatedAuthor : a)
+      return updatedAuthor
     }
   }
 }
