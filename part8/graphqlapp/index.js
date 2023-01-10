@@ -5,7 +5,7 @@ const jwt = require('jsonwebtoken')
 const Person = require('./models/person')
 const User = require('./models/user')
 
-const MONGODB_URI = 'mongodb+srv://databaseurlhere'
+const MONGODB_URI = 'mongodb+srv://danvidana:IguanaMongoDB6@cluster0.hhdd5sk.mongodb.net/?retryWrites=true&w=majority'
 const JWT_SECRET = 'NEED_HERE_A_SECRET_KEY'
 
 console.log('connecting to', MONGODB_URI)
@@ -145,6 +145,7 @@ const resolvers = {
 
     login: async (root, args) => {
       const user = await User.findOne({ username: args.username })
+      console.log(user)
 
       if ( !user || args.password !== 'secret' ) {
         throw new UserInputError("wrong credentials")
@@ -182,11 +183,13 @@ const server = new ApolloServer({
   typeDefs,
   resolvers,
   context: async ({ req }) => {
+    console.log('req.headers.authorization: ', req.headers.authorization)
     const auth = req ? req.headers.authorization : null
     if (auth && auth.toLowerCase().startsWith('bearer ')) {
       const decodedToken = jwt.verify(
-        auth.substring(7). JWT_SECRET
+        auth.substring(7).JWT_SECRET
       )
+      console.log(decodedToken.id)
       const currentUser = await User.findById(decodedToken.id).populate('friends')
       return { currentUser }
     }
