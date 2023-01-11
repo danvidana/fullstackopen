@@ -120,7 +120,12 @@ const resolvers = {
   },
 
   Mutation: {
-    addBook: async (root, args) => {
+    addBook: async (root, args, context) => {
+      const currentUser = context.currentUser
+      if (!currentUser) {
+        throw new AuthenticationError('not authenticated')
+      }
+
       const author = await Author.findOne({ name: args.author })
 
       const saveBook = async (author) => {
@@ -132,7 +137,7 @@ const resolvers = {
             invalidArgs: args,
           })
         }
-          return book
+        return book
       }
 
       if(!author) {
@@ -144,9 +149,9 @@ const resolvers = {
             invalidArgs: args,
           })
         }
-        saveBook(newAuthor)
+        return saveBook(newAuthor)
       } else {
-        saveBook(author)
+        return saveBook(author)
       }
     },
 
@@ -202,7 +207,7 @@ const server = new ApolloServer({
     const auth = req ? req.headers.authorization : null
     if (auth && auth.toLowerCase().startsWith('bearer ')) {
       const decodedToken = jwt.verify(
-        auth.substring(7). JWT_SECRET
+        auth.substring(7), JWT_SECRET
       )
       const currentUser = await User.findById(decodedToken.id)
       return { currentUser }
