@@ -12,18 +12,13 @@ const Notify = ({ errorMessage }) => {
   if (!errorMessage) {
     return null
   }
-  return (
-    <div style={{color: 'red'}}>
-    {errorMessage}
-    </div>
-  )
+  return <div style={{ color: 'red' }}>{errorMessage}</div>
 }
 
 const App = () => {
-  const [token, setToken] = useState(null)
-  const [errorMessage, setErrorMessage] = useState(null)
-
   const result = useQuery(ALL_PERSONS)
+  const [errorMessage, setErrorMessage] = useState(null)
+  const [token, setToken] = useState(null)
   const client = useApolloClient()
 
   const logout = () => {
@@ -47,20 +42,20 @@ const App = () => {
     return (
       <>
         <Notify errorMessage={errorMessage} />
-        <LoginForm  setError={notify}  setToken={setToken} />
+        <LoginForm setToken={setToken} setError={notify} />
       </>
     )
   }
 
   return (
-    <div>
+    <>
       <Notify errorMessage={errorMessage} />
       <button onClick={logout}>logout</button>
       <Persons persons={result.data.allPersons} />
       <PersonForm setError={notify} />
-      <PhoneForm setError={notify}/>
-    </div>
+      <PhoneForm setError={notify} />
+    </>
   )
 }
 
-export default App;
+export default App

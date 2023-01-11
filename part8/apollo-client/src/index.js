@@ -26,6 +26,8 @@ const client = new ApolloClient({
   link: authLink.concat(httpLink)
 })
 
+console.log(client.link)
+
 ReactDOM.createRoot(document.getElementById('root')).render(
   <ApolloProvider client={client}>
     <App />
