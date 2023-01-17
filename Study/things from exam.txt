@@ -1,0 +1,5 @@
+useMemo -> HOC
+what is useCallback difference with useEffect
+Difference between useEffect and useLayoutEffect
+difference in sizes between classes and hooks
+Difference in component trees
